@@ -1,5 +1,7 @@
 # Auto Clicker (Fabric, MC 1.21.11)
 
+> Part of the lineup at **[wantedasa.dev/projects](https://wantedasa.dev/projects)**.
+
 Client-side mod: an auto clicker that **keeps clicking while Minecraft is not in focus**.
 Press F6, tab into another window, and it keeps going.
 
