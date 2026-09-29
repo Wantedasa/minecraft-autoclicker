@@ -1,0 +1,17 @@
+# --- build / run output ---
+build/
+run/
+logs/
+out/
+.gradle/
+
+# --- bundled local Gradle distribution (large, not source) ---
+gradle-9.7.1/
+gradle-8*/
+
+# --- editors / OS ---
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "autoclicker",
+  "version": "${version}",
+  "name": "Auto Clicker",
+  "description": "An auto clicker that keeps clicking while Minecraft is not focused - tab out and it keeps running.\n\nControls:\n- F6: toggle the auto clicker on/off.\n- F7: open the settings screen.\n\nSettings: click interval (hours/minutes/seconds/milliseconds), mouse button (left/right), click type (Single/Double/Triple/Hold), random offset (+0-N ms), repeat mode (until stopped or N times). Everything is stored in config/autoclicker.json and can be edited by hand.\n\nHow it works: the mod injects clicks into Minecraft's own attack/use bindings, so the game sends the interaction packets exactly like a normal mouse click. Because the client keeps ticking and processing input when the window is unfocused, clicks continue while you are in another window. The only vanilla behaviour that would stop it is 'Pause on lost focus' (which opens the game menu 500 ms after losing focus) - the mod disables that option while it runs and restores it when you switch it off.\n\nNote: because it automates clicks, server-side anti-cheat systems may consider it suspicious. The mod does not bypass any checks - use it on multiplayer servers at your own risk.",
+  "icon": "autoclicker.png",
+  "authors": ["wantedasa"],
+  "contact": {
+    "homepage": "https://wantedasa.dev"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["net.samue.autoclicker.AutoClickerClient"],
+    "fabric-client-gametest": ["net.samue.autoclicker.AutoClickerGameTest"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
