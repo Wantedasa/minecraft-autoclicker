@@ -1,63 +1,76 @@
 # Auto Clicker (Fabric, MC 1.21.11)
 
-Client-Mod: ein Auto-Clicker, der **weiterklickt, wenn Minecraft nicht im Vordergrund ist**.
-Also: F6 an → in ein anderes Fenster tabben → er klickt weiter.
+Client-side mod: an auto clicker that **keeps clicking while Minecraft is not in focus**.
+Press F6, tab into another window, and it keeps going.
 
-## Bedienung
-- **F6** – Auto-Clicker an/aus (Chat sagt ON/OFF).
-- **F7** – Einstellungs-Menue oeffnen (oder schliessen).
-- Tasten sind unter `Steuerung` frei belegbar (Kategorie "Auto Clicker").
+## Controls
 
-Im Spiel gibt es **kein** Overlay - den Status siehst du an der Chat-Zeile beim Umschalten.
+- **F6** – toggle the auto clicker on/off (chat confirms ON/OFF).
+- **F7** – open (or close) the settings screen.
+- Both keys are rebindable in Options → Controls, category "Auto Clicker".
 
-## Einstellungen (F7)
-- **Click interval** – hours / mins / secs / milliseconds (wie bei jedem Auto-Clicker).
-  0 ms = so schnell wie ein Client-Tick erlaubt (max. 20 Klicks/Tick, also 1000/s).
-- **Random offset + -** – jeder Klick kommt `interval + 0..N ms` spaeter (menschlicher).
-- **Mouse button** – Left (Attacke / abbauen) oder Right (benutzen / essen / angeln).
-- **Click type** – Single / Double / Triple, oder **Hold** (Button bleibt gedrueckt:
-  Attacke jede Tick, bzw. Rechtsklick-Halten fuer Essen/Angeln/Bogen).
-- **Repeat** – bis Stop oder N mal.
-- **Keep running when unfocused** – schaltet fuer die Session "Pause on lost focus" aus.
+There is deliberately **no HUD overlay** – the chat line on toggle is the only on-screen feedback.
 
-Alles liegt in `%APPDATA%/.minecraft/config/autoclicker.json` und ist auch per Hand editierbar
-(Mod liest sie beim Start; Datei wird automatisch angelegt).
+## Settings (F7)
 
-## Wie es funktioniert (und warum es auch unfokussiert klickt)
-Der Mod bewegt keinen Cursor, sondern schiebt echte Tasten-Presses in die Vanilla-Bindings
-Attack/Use (`KeyBinding.setKeyPressed` + `KeyBinding.onKeyPressed`) - genau das, was der echte
-Mausklick auch macht. Der Client schickt die Interaktions-Pakete also selbst, wie beim normalen
-Klicken (kein Paket-Spoofing, kein Desync).
+- **Click interval** – hours / minutes / secs / milliseconds (like every auto clicker).
+  0 ms means "as fast as a client tick allows" (up to 20 clicks per tick, so 1000/s).
+- **Random offset + -** – each click fires `interval + 0..N ms` later, which looks more human.
+- **Mouse button** – Left (attack / break) or Right (use item / eat / fish).
+- **Click type** – Single / Double / Triple, or **Hold** (the button stays pressed: attack every
+  tick, or hold right-click for eating, fishing and bows).
+- **Repeat** – until stopped, or N times.
+- **Keep running when unfocused** – disables "Pause on lost focus" for the session.
 
-Warum das beim Tabben weiterlaeuft: Minecraft tickt und verarbeitet Input auch ohne Fensterfokus
-- eine echte Maus schickt ihre Events aber an das Fenster, das gerade **im** Fokus ist.
-Das Einzige, was den Vanilla-Client stoppt, ist der Fokusverlust-Pause: 500 ms nach Fokusverlust
-oeffnet er das Spielmenue (und dann wird kein Input mehr verarbeitet). Der Mod setzt deshalb
-beim Einschalten `pauseOnLostFocus` aus und beim Ausschalten wieder zurueck.
+Everything lives in `%APPDATA%/.minecraft/config/autoclicker.json`, is created on first start and
+can be edited by hand (the mod reads it on launch).
 
-Wichtig: nur im **Inventar-/GUI-freien** Zustand wird geklickt (wie im Vanilla-Client auch),
-und **nicht** minimiert-getestet - minimieren kann die Tickrate druecken, also lieber nur tabben.
+## How it works (and why it keeps clicking when unfocused)
 
-## Einschraenkungen
-- Klickt im Spiel, nicht in anderen Programmen (der Cursor wird nicht bewegt).
-- Block-Abbauen per "gedrueckt halten" funktioniert nur bei fokussiertem Fenster
-  (Vanilla verlangt dafuer den gegrabbten Cursor). Rechtsklick-Halten (essen/angeln) laeuft
-  dagegen auch unfokussiert.
-- Server-Anti-Cheat kann Auto-Klicker als verdaechtig einstufen. Der Mod umgeht nichts -
-  auf fremden Servern auf eigene Verantwortung.
+The mod does not move your cursor. It injects real key presses into Minecraft's own Attack/Use
+bindings (`KeyBinding.setKeyPressed` + `KeyBinding.onKeyPressed`) – exactly what a physical mouse
+click does. The client therefore sends the interaction packets itself, like it would for normal
+clicking (no packet spoofing, no desync).
 
-## Bauen
+Why it survives tabbing out: Minecraft keeps ticking and processing input without window focus –
+a physical mouse just sends its events to whichever window is focused. The only vanilla behaviour
+that stops the client is the lost-focus pause: 500 ms after losing focus it opens the game menu,
+and from then on no input is processed. This mod turns `pauseOnLostFocus` off while it runs and
+restores the previous value when you switch it off.
+
+Clicks only fire while no screen is open (the same rule the vanilla client uses for attack/use).
+Minimising the window is not tested – prefer tabbing out, since minimising can throttle the tick
+rate.
+
+## Limitations
+
+- It clicks in-game, not in other applications (the cursor is never moved).
+- Hold-to-break blocks (left button held down) only works while the window is focused, because
+  vanilla requires a grabbed cursor for continuous breaking. Holding right-click (eating, fishing,
+  bows) does work unfocused.
+- Server-side anti-cheat may consider an auto clicker suspicious. The mod bypasses nothing –
+  use it on multiplayer servers at your own risk.
+
+## Build
+
 ```bash
-./gradlew build          # bzw. build.bat / build.sh  (nutzt mitgeliefertes gradle-9.7.1)
-# Ergebnis: build/libs/autoclicker-1.0.1.jar
+./gradlew build          # or build.bat / build.sh (uses the bundled gradle-9.7.1 locally)
+# result: build/libs/autoclicker-1.0.1.jar
 ```
-Jar nach `.minecraft/mods/` (Fabric Loader + Fabric API noetig). Direkt installieren: `install.bat`.
-Der Mod zeigt bewusst **kein** HUD-Overlay - an/aus siehst du nur an der Chat-Zeile beim Umschalten.
 
-## Selbsttest (dev)
+Drop the jar into `.minecraft/mods/` (Fabric Loader + Fabric API required), or run `install.bat`
+to build and copy it in one step. Requires JDK 21.
+
+## Self-test (dev)
+
 ```bash
-./gradle-9.7.1/bin/gradle runClientGametest
+./gradlew runClientGametest
 ```
-Fabric-Client-Gametest (`AutoClickerGameTest`): oeffnet das Einstellungs-Menue, macht
-Screenshots und prueft in einer Testwelt, dass bei **unfokussiertem** Fenster weiter geklickt
-wird und kein Spielmenue aufpoppt. Laeuft nur mit `-Dfabric.client.gametest`.
+
+The Fabric client gametest (`AutoClickerGameTest`) opens the settings screen, takes screenshots and
+asserts in a test world that clicks keep firing with an **unfocused** window and that no game menu
+pops up. It only runs with `-Dfabric.client.gametest`, so it is inert in a released jar.
+
+## License
+
+MIT – see [LICENSE](LICENSE).
